@@ -1,7 +1,7 @@
 <?php
 /**
  * This file contains general core functions
- * 
+ *
  * @package teachpress\core
  * @license http://www.gnu.org/licenses/gpl-2.0.html GPLv2 or later
  * @since 5.0.0
@@ -16,10 +16,10 @@
  * @since 6.0.0
  */
 function tp_ajax_callback () {
-    
+
     // Check permissions
     if ( is_user_logged_in() && current_user_can('use_teachpress') ) {
-        
+
         /**
          * Getting author's publications (for show_authors.php)
          * Works if $_GET['author_id'] is given
@@ -28,7 +28,7 @@ function tp_ajax_callback () {
         if ( $author_id !== 0 ) {
             tp_ajax::get_author_publications($author_id);
         }
-        
+
         /**
          * Getting assessment screen (for show_single_course.php)
          * Works if $_GET['assessment_id'] is given
@@ -37,7 +37,7 @@ function tp_ajax_callback () {
         if ( $assessment_id !== 0 ) {
             tp_ajax::get_assessment_screen($assessment_id);
         }
-        
+
         /**
          * Getting artefact screen (for show_single_course.php)
          * Works if $_GET['artefact_id'] is given
@@ -46,7 +46,7 @@ function tp_ajax_callback () {
         if ( $artefact_id !== 0 ) {
             tp_ajax::get_artefact_screen($artefact_id);
         }
-        
+
         /**
          * Removing documents
          * Works if $_GET['del_document'] is given
@@ -116,7 +116,7 @@ function tp_ajax_callback () {
         if ( isset( $_GET['cite_pub'] ) && isset( $_GET['cite_type'] )  ) {
             tp_ajax::get_cite_text($_GET['cite_pub'], $_GET['cite_type']);
         }
-        
+
         /**
          * Getting the edit meta field dialog
          * @since 6.0.0
@@ -124,7 +124,7 @@ function tp_ajax_callback () {
         if ( isset( $_GET['meta_field_id'] ) ) {
             $meta_field_id = intval( $_GET['meta_field_id'] );
             tp_ajax::get_meta_field_screen($meta_field_id);
-        } 
+        }
 
     }
 
@@ -191,24 +191,24 @@ function tp_load_template($slug) {
     if ( $slug === '' ) {
         return;
     }
-    
+
     $slug = esc_attr($slug);
     $templates = tp_detect_templates();
-    
+
     // load template file
     if ( array_key_exists($slug, $templates) ) {
         include_once $templates[$slug];
         wp_enqueue_style($slug, TEACHPRESS_TEMPLATE_URL . $slug. '.css');
         return new $slug();
     }
-    
+
     return false;
 
 }
 
-/** 
+/**
  * teachPress Page Menu
- * 
+ *
  * possible values for array $atts:
  *      @type int number_entries       Number of all available entries
  *      @type int entries_per_page     Number of entries per page
@@ -238,7 +238,7 @@ function tp_page_menu ($atts) {
     $entries_per_page = intval($entries_per_page);
     $current_page = intval($current_page);
     $entry_limit = intval($entry_limit);
-    
+
     // if number of entries > number of entries per page
     if ($number_entries > $entries_per_page) {
         $num_pages = floor (($number_entries / $entries_per_page));
@@ -257,7 +257,7 @@ function tp_page_menu ($atts) {
         $page_input = ' <input name="limit" type="text" size="2" value="' .  $current_page . '" style="text-align:center;" /> ' . __('of','teachpress') . ' ' . $num_pages . ' ';
 
         // next page/ last page
-        if ( ( $entry_limit + $entries_per_page ) <= ($number_entries)) { 
+        if ( ( $entry_limit + $entries_per_page ) <= ($number_entries)) {
             $next_links = '<a href="' . $page_link . 'limit=' . ($current_page + 1) . '&amp;' . $link_attributes . '" title="' . __('next page','teachpress') . '" class="page-numbers">&rsaquo;</a> <a href="' . $page_link . 'limit=' . $num_pages . '&amp;' . $link_attributes . '" title="' . __('last page','teachpress') . '" class="page-numbers">&raquo;</a> ';
         }
         else {
@@ -270,53 +270,53 @@ function tp_page_menu ($atts) {
         }
         else {
             return $before . '<div class="' . $class . '"><span class="displaying-num">' . $number_entries . ' ' . __('entries','teachpress') . '</span> ' . $back_links . ' ' . $current_page . ' ' . __('of','teachpress') . ' ' . $num_pages . ' ' . $next_links . '</div>' . $after;
-        }	
+        }
     }
-}	
+}
 
-/** 
+/**
  * Print message
  * @param string $message   The html content of the message
  * @param string $color     green (default), orange, red
  * @version 2
  * @since 5.0.0
-*/ 
+*/
 function get_tp_message($message, $color = 'green') {
     echo '<div class="teachpress_message teachpress_message_' . esc_attr( $color ) . '">';
     echo '<strong>' . $message . '</strong>';
     echo '</div>';
 }
 
-/** 
+/**
  * Split a timestamp
  * @param datetime $date_string
  * @return array
  * @since 0.20.0
  *
  * $split[0][0] => Year
- * $split[0][1] => Month 
+ * $split[0][1] => Month
  * $split[0][2] => Day
- * $split[0][3] => Hour 
- * $split[0][4] => Minute 
+ * $split[0][3] => Hour
+ * $split[0][4] => Minute
  * $split[0][5] => Second
-*/ 
+*/
 function tp_datesplit($date_string) {
-    $preg = '/[\d]{2,4}/'; 
-    $split = array(); 
-    preg_match_all($preg, $date_string, $split); 
-    return $split; 
+    $preg = '/[\d]{2,4}/';
+    $split = array();
+    preg_match_all($preg, $date_string, $split);
+    return $split;
 }
 
-/** 
+/**
  * Gives an array with all publication types
- * 
+ *
  * Definition of array[] $pub_types:
  *      $pub_types[x][0] ==> BibTeX key
  *      $pub_types[x][1] ==> i18n string (singular)
  *      $pub_types[x][2] ==> i18n string (plural)
- * 
+ *
  * @return array
-*/ 
+*/
 function get_tp_publication_types() {
     $pub_types[0] = array (0 => '0', 1 => __('All types','teachpress'), 2 => __('All types','teachpress'));
     $pub_types[1] = array (0 => 'article', 1 => __('Journal Article','teachpress'), 2 => __('Journal Articles','teachpress'));
@@ -326,7 +326,7 @@ function get_tp_publication_types() {
     $pub_types[5] = array (0 => 'conference', 1 => __('Conference','teachpress'), 2 => __('Conferences','teachpress'));
     $pub_types[6] = array (0 => 'inbook', 1 => __('Book Chapter','teachpress'), 2 => __('Book Chapters','teachpress'));
     $pub_types[7] = array (0 => 'incollection', 1 => __('Incollection','teachpress'), 2 => __('Incollections','teachpress'));
-    $pub_types[8] = array (0 => 'inproceedings', 1 => __('Inproceeding','teachpress'), 2 => __('Inproceedings','teachpress'));
+    $pub_types[8] = array (0 => 'inproceedings', 1 => __('Inproceedings','teachpress'), 2 => __('Inproceedings','teachpress'));
     $pub_types[9] = array (0 => 'manual', 1 => __('Technical Manual','teachpress'), 2 => __('Technical Manuals','teachpress'));
     $pub_types[10] = array (0 => 'mastersthesis', 1 => __('Masters Thesis','teachpress'), 2 => __('Masters Theses','teachpress'));
     $pub_types[11] = array (0 => 'misc', 1 => __('Miscellaneous','teachpress'), 2 => __('Miscellaneous','teachpress'));
@@ -367,7 +367,7 @@ function tp_map_pubtype_to_osbib ($string) {
         'techreport' => 'report',
         'unpublished' => 'miscellaneous'
     );
-    
+
     if ( !array_key_exists($string, $types) ) {
         return 'genericMisc';
     }
@@ -375,13 +375,13 @@ function tp_map_pubtype_to_osbib ($string) {
         return 'genericMisc';
     }
     return $types[$string];
-    
+
 }
 
 /**
  * get the path to a mimetype image
  * @param string $url   --> the URL of a file
- * @return string 
+ * @return string
  * @since 3.1.0
  */
 function get_tp_mimetype_images($url) {
@@ -452,14 +452,14 @@ function tp_translate_pub_type($string, $num = 'sin') {
     return $translated_string;
 }
 
-/** 
+/**
  * Get publication types
- * @param string $selected  --> 
+ * @param string $selected  -->
  * @param string $mode      --> sng (singular titles) or pl (plural titles)
- * 
+ *
  * @version 2
  * @since 4.1.0
- * 
+ *
  * @return string
 */
 function get_tp_publication_type_options ($selected, $mode = 'sng') {
@@ -470,7 +470,7 @@ function get_tp_publication_type_options ($selected, $mode = 'sng') {
      $max = count($pub_types);
      for ($i = 1; $i < $max; $i++) {
          $current = ($pub_types[$i][0] == $selected && $selected != '') ? 'selected="selected"' : '';
-         $types = $types . '<option value="' . $pub_types[$i][0] . '" ' . $current . '>' . __('' . $pub_types[$i][$m] . '','teachpress') . '</option>';  
+         $types = $types . '<option value="' . $pub_types[$i][0] . '" ' . $current . '>' . __('' . $pub_types[$i][$m] . '','teachpress') . '</option>';
      }
    return $types;
 }
@@ -478,11 +478,11 @@ function get_tp_publication_type_options ($selected, $mode = 'sng') {
 /**
  * Get the array structure for a parameter
  * @param string $type  --> values: course_array, publication_array
- * @return array 
+ * @return array
  */
 function get_tp_var_types($type) {
     if ($type == 'course_array') {
-        $ret = array( 
+        $ret = array(
             'course_id' => '',
             'name' => '',
             'type' => '',
@@ -503,7 +503,7 @@ function get_tp_var_types($type) {
             'use_capabilites' => '');
     }
     if ($type == 'publication_array') {
-        $ret = array( 
+        $ret = array(
             'pub_id' => '',
             'title' => '',
             'type' => '',
@@ -546,7 +546,7 @@ function get_tp_var_types($type) {
     return $ret;
 }
 
-/** 
+/**
  * Define who can use teachPress
  * @param array $roles
  * @param string $capability
@@ -556,8 +556,8 @@ function get_tp_var_types($type) {
 function tp_update_userrole($roles, $capability) {
     global $wp_roles;
 
-    if ( empty($roles) || ! is_array($roles) ) { 
-        $roles = array(); 
+    if ( empty($roles) || ! is_array($roles) ) {
+        $roles = array();
     }
     $who_can = $roles;
     $who_cannot = array_diff( array_keys($wp_roles->role_names), $roles);
@@ -613,12 +613,12 @@ function tp_convert_file_size ($bytes) {
  * @since 5.0.0
  */
 function tp_write_data_for_tinymce () {
-    
+
     // Only write the data if the page is a page/post editor
     if ( $GLOBALS['current_screen']->base !== 'post' ) {
         return;
     }
-    
+
     // List of courses
     $course_list = array();
     $course_list[] = array( 'text' => '=== SELECT ===' , 'value' => 0 );
@@ -632,25 +632,25 @@ function tp_write_data_for_tinymce () {
             $course_list[] = array( 'text' => '====================' , 'value' => 0 );
         }
     }
-    
+
     // List of semester/term
     $semester_list = array();
     $semester_list[] = array( 'text' => __('Default','teachpress') , 'value' => '' );
-    foreach ($semester as $sem) { 
+    foreach ($semester as $sem) {
         $semester_list[] = array( 'text' => stripslashes($sem->value) , 'value' => stripslashes($sem->value) );
     }
-    
+
     // List of publication users
     $pub_user_list = array();
     $pub_user_list[] = array( 'text' => __('All','teachpress') , 'value' => '' );
     $pub_users = tp_publications::get_pub_users();
-    foreach ($pub_users as $row) { 
+    foreach ($pub_users as $row) {
         $user_data = get_userdata($row->user);
         if ( $user_data !== false ) {
             $pub_user_list[] = array( 'text' => $user_data->display_name , 'value' => intval($row->user) );
         }
     }
-    
+
     // List of publication tags
     $pub_tag_list = array();
     $pub_tag_list[] = array( 'text' => __('All','teachpress'), 'value' => null );
@@ -658,24 +658,24 @@ function tp_write_data_for_tinymce () {
     foreach($pub_tags as $pub_tag){
 	$pub_tag_list[] = array( 'text' => $pub_tag->name, 'value' => intval($pub_tag->tag_id) );
     }
-    
+
     // List of publication types
     $pub_type_list = array();
     $pub_types = get_tp_publication_types();
     foreach ( $pub_types as $pub_type ) {
         $pub_type_list[] = array ( 'text' => $pub_type[1], 'value' => stripslashes($pub_type[0]) );
     }
-    
+
     // List of publication templates
     $pub_templates_list = array();
     $pub_templates = tp_list_templates();
     foreach ( $pub_templates as $row ) {
         $pub_templates_list[] = array ( 'text' => $row, 'value' => $row);
     }
-    
+
     // Current post id
     $post_id = ( isset ($_GET['post']) ) ? intval($_GET['post']) : 0;
-    
+
     // Write javascript
     ?>
     <script type="text/javascript">
