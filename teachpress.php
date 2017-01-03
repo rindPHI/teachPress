@@ -3,11 +3,11 @@
 Plugin Name: teachPress
 Plugin URI: http://mtrv.wordpress.com/teachpress/
 Description: With teachPress you can easy manage courses, enrollments and publications.
-Version: 6.0beta
+Version: 6.0
 Author: Michael Winkler
 Author URI: http://mtrv.wordpress.com/
 Min WP Version: 3.9
-Max WP Version: 4.6.1
+Max WP Version: 4.7
 Text Domain: teachpress
 Domain Path: /languages
 GitHub Plugin URI: https://github.com/winkm89/teachPress
@@ -226,13 +226,6 @@ if ( !defined('TEACHPRESS_TEMPLATE_PATH') ) {
     */
     define('TEACHPRESS_TEMPLATE_PATH', plugin_dir_path(__FILE__) . 'templates/');}
 
-if ( !defined('TEACHPRESS_OSBIB_TEMPLATE_PATH') ) {
-    /**
-     * This value defines the template path
-     * @since 6.0.0
-    */
-    define('TEACHPRESS_OSBIB_TEMPLATE_PATH', plugin_dir_path(__FILE__) . 'includes/osbib_new/styles/');}
-
 if ( !defined('TEACHPRESS_TEMPLATE_URL') ) {
     /**
      * This value defines the template url
@@ -242,7 +235,7 @@ if ( !defined('TEACHPRESS_TEMPLATE_URL') ) {
 
 if ( !defined('TEACHPRESS_ALTMETRIC_SUPPORT') ) {
     /**
-     * This value defines the template url
+     * This value defines if the altmetric support is available (loads external sources)
      * @since 6.0.0
     */
     define('TEACHPRESS_ALTMETRIC_SUPPORT', false);}
@@ -366,19 +359,11 @@ if ( !class_exists( 'PARSEENTRIES' ) ) {
 /*****************/
 
 /**
- * Load OSBiB core
- * @since 6.0.0
- */
-function tp_load_osbib() {
-    include_once 'includes/osbib_new/core.php';
-}
-
-/**
  * Returns the current teachPress version
  * @return string
 */
 function get_tp_version() {
-    return '6.0beta';
+    return '6.0';
 }
 
 /**
